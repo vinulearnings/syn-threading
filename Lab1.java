@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.function.Predicate;
 class MyRecursiveTask extends RecursiveTask<List<Integer>>
@@ -73,13 +74,21 @@ public class Lab1 {
 		scanner.nextInt();
 	
 		
-		List<Integer> l1 = new ArrayList<>();
-		for (int i = 0; i<99999;i++){
-			l1.add( (int)(Math.random()*1000));
+		List<Integer> list = new ArrayList<>();
+		for (int i = 0; i< 40;i++){
+				list.add((int)(Math.random() *1000));
 		}
-		System.out.println(l1);
+			
+	//	l1.parallelStream().filter((x)->x>500).forEach(System.out::println);
+		Predicate<Integer> pred = (num)->num>200;
+		
+		MyRecursiveTask task = new MyRecursiveTask(list, pred);
+		ForkJoinPool forkJoinPool = new ForkJoinPool(4);
+			List<Integer> sortedlist = forkJoinPool.invoke(task);
+			System.out.println(sortedlist);
 
-		l1.parallelStream().filter((x)->x>500).forEach(System.out::println);
+			
+			
 	}
 
 }
