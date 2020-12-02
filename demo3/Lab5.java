@@ -11,9 +11,12 @@ class TransportSelection extends Thread{
 	public void run() {
 		for (int i = 0; i< 10 ;i++){
 			try { 	Thread.sleep( (long)(Math.random()*1000));} catch (InterruptedException e) { }
-			System.out.println(currentThread().getName() + "  " + i);
+			System.out.println(currentThread().getName() + "  " + i + "  " + mode);
 		}
+		if (Lab5.mode =="")
+			Lab5.mode = this.mode;
 		latch.countDown();
+		
 		System.out.println("We will travel via  " + mode);
 }
 }
@@ -29,27 +32,37 @@ class LocationSelection extends Thread{
 	public void run() {
 		for (int i = 0; i< 10 ;i++){
 			try { 	Thread.sleep( (long)(Math.random()*1000));} catch (InterruptedException e) { }
-			System.out.println(currentThread().getName() + "  " + i);
+			System.out.println(currentThread().getName() + "  " + i + "  " + loc);
 		}
+		if (Lab5.loc =="")
+			Lab5.loc = this.loc;
 		latch.countDown();
+	
 		System.out.println("Final location is " + loc);
 }
 }
 public class Lab5 {
 	public static boolean flag = false;
+	static String loc="";
+	static String mode="";
 	public static void main(String[] args) throws InterruptedException {
-		CountDownLatch latch = new CountDownLatch(3);
+		
+		CountDownLatch latch = new CountDownLatch(1);
+		CountDownLatch latch1 = new CountDownLatch(1);
 		LocationSelection t1 = new LocationSelection("Lonavala", latch);
 		LocationSelection t2 = new LocationSelection("Khandala", latch);
 		LocationSelection t3 = new LocationSelection("Khandala1", latch);
-		TransportSelection t4 = new TransportSelection("Car" , latch);
-		TransportSelection t5 = new TransportSelection("Bus" , latch);
+		TransportSelection t4 = new TransportSelection("Car" , latch1);
+		TransportSelection t5 = new TransportSelection("Bus" , latch1);
 		t1.start();
 		t2.start();
 		t3.start();
+		t4.start();
+		t5.start();
 		latch.await();
+		latch1.await();
 		System.out.println(" Show this code when any one thread gets over");
-		System.out.println("Final Location in Main is ... travel mode selected is .... );
+		System.out.println("Final Location in Main is " + loc + " travel mode selected is  " + mode);
 	}
 
 }
