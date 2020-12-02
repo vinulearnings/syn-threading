@@ -1,3 +1,4 @@
+package dyn;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,14 +18,10 @@ class MyRecursiveTask extends RecursiveTask<List<Integer>>
 	 private List<MyRecursiveTask> forkthetasks() {
 	        List<MyRecursiveTask> subtasks =     new ArrayList<MyRecursiveTask >();
 
-	        MyRecursiveTask  subtask1 = new MyRecursiveTask (list.subList(0, 250), filter);
-	        MyRecursiveTask  subtask2 = new MyRecursiveTask (list.subList( 250, 500), filter);
-	        MyRecursiveTask  subtask3 = new MyRecursiveTask (list.subList(500,750), filter);
-	        MyRecursiveTask  subtask4 = new MyRecursiveTask (list.subList(750, 999), filter);
+	        MyRecursiveTask  subtask1 = new MyRecursiveTask (list.subList(0, list.size()/2), filter);
+	        MyRecursiveTask  subtask2 = new MyRecursiveTask (list.subList( list.size()/2,  list.size()), filter);
 	        subtasks.add(subtask1);
 	        subtasks.add(subtask2);
-	        subtasks.add(subtask3);
-	        subtasks.add(subtask4);
 	        return subtasks;
 	    }
 	protected List<Integer> compute() {
@@ -38,12 +35,7 @@ class MyRecursiveTask extends RecursiveTask<List<Integer>>
             for(MyRecursiveTask  subtask : subtasks){
                 subtask.fork();
             }
-            try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        
         	List<Integer> list1 = new ArrayList<Integer>(); 
           
             for(MyRecursiveTask  subtask : subtasks) {
@@ -66,7 +58,7 @@ class MyRecursiveTask extends RecursiveTask<List<Integer>>
 }
 
 
-public class Lab1 {
+public class Lab2 {
 
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
@@ -75,20 +67,15 @@ public class Lab1 {
 	
 		
 		List<Integer> list = new ArrayList<>();
-		for (int i = 0; i< 40;i++){
+		for (int i = 0; i< 500;i++){
 				list.add((int)(Math.random() *1000));
 		}
-			
-	//	l1.parallelStream().filter((x)->x>500).forEach(System.out::println);
 		Predicate<Integer> pred = (num)->num>200;
 		
 		MyRecursiveTask task = new MyRecursiveTask(list, pred);
-		ForkJoinPool forkJoinPool = new ForkJoinPool(4);
-			List<Integer> sortedlist = forkJoinPool.invoke(task);
+		ForkJoinPool forkJoinPool = new ForkJoinPool();
+		List<Integer> sortedlist = forkJoinPool.invoke(task);
 			System.out.println(sortedlist);
-
-			
-			
 	}
 
 }
